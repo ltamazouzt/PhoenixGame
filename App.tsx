@@ -5,41 +5,32 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import { StatusBar, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Game from './src/Game';
+import StartScreen, { type Difficulty } from './src/StartScreen';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
+  const [bestScore, setBestScore] = useState(0);
 
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      {difficulty ? (
+        <Game
+          difficulty={difficulty}
+          best={bestScore}
+          onBestChange={setBestScore}
+          onBack={() => setDifficulty(null)}
+        />
+      ) : (
+        <StartScreen best={bestScore} onSelect={setDifficulty} />
+      )}
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
